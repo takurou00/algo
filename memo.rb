@@ -22,10 +22,35 @@ def binary_search(array,target)
 
      if array[center] == target 
         return center 
-     elsif array[center] == < target
+     elsif array[center] < target
         head = center + 1
      else
         tail = center - 1
      end
   end
 end
+
+### 整数
+
+## 最大公約数
+2.gcd(2)                    # => 2
+3.gcd(7)                    # => 1
+3.gcd(-7)                   # => 1
+((1<<31)-1).gcd((1<<61)-1)  # => 1
+
+## 最小公倍数
+2.lcm(2)                    # => 2
+3.lcm(-7)                   # => 21
+((1<<31)-1).lcm((1<<61)-1)  # => 4951760154835678088235319297
+
+## ユークリッド互除
+
+
+
+
+
+
+
+
+
+  
