@@ -1,3 +1,9 @@
+### hash
+h = Hash.new(2)
+
+### 式変形
+as.each.with_index(1) { |a, i| h[i] = a }
+
 ### 2分探索
 
 # method
