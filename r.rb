@@ -1,16 +1,10 @@
 
-n, m = gets.split.map(&:to_i)
-a = gets.split.map(&:to_i)
-b, sum = 0, 0
-m.times do |i|
-  b += a[i] * (i + 1) #　(i*Bi)の和の初期化
-  sum += a[i]
-end
+n, x = gets.split.map(&:to_i)
+ans = 1
+n.times {
+  a, b = gets.split.map(&:to_i)
+  ans = (ans << a) | (ans << b)
+  p ans 
+}
+puts ans[x] == 1 ? 'Yes' : 'No'
 
-ans = b
-(n - m).times do |i|
-  b = b - (sum - m * a[i + m]) # 次のb
-  sum = sum - a[i] + a[i + m] # 次のsum
-  ans = [ans, b].max
-end
-puts ans
