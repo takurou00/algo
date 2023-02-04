@@ -1,13 +1,11 @@
 
 
-def detectCycle(head)
-    hash = {}
-    ptr = head
+
+
+def rotate_picture(s,n,m)
+    
   
-    while ptr
-      return ptr if hash[ptr]
-      
-      hash[ptr] = true
-      ptr = ptr.next
-    end
-  end
+end
+
+m = gets.chomp
+string_compression(m)
