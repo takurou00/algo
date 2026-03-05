@@ -1,0 +1,6 @@
+subscription_id = "your-azure-subscription-id"
+location        = "japaneast"
+db_password     = "YourSecurePassword123!"
+auth_secret     = "your-super-secret-key-minimum-32-characters-long"
+image_tag       = "v1.0.0"
+frontend_url    = "https://mediavault-frontend-prod.yourapp.azurecontainerapps.io"

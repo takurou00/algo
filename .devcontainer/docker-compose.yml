@@ -1,0 +1,10 @@
+services:
+  devcontainer:
+    image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
+    volumes:
+      - ..:/workspace:cached
+      - ~/.gitconfig:/root/.gitconfig:ro
+    command: sleep infinity
+    environment:
+      - NODE_ENV=development
+    network_mode: service:backend
