@@ -6,6 +6,8 @@ import {
   timestamp,
   uuid,
   boolean,
+  jsonb,
+  index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -54,6 +56,31 @@ export const verifications = pgTable("verifications", {
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
+
+// Better Auth: twoFactor plugin table
+export const twoFactors = pgTable("two_factors", {
+  id: text("id").primaryKey(),
+  secret: text("secret").notNull(),
+  backupCodes: text("backup_codes").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+});
+
+// Audit log for security events
+export const auditLogs = pgTable(
+  "audit_logs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
+    action: text("action").notNull(), // e.g. "login.success", "login.failed", "2fa.enabled"
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    metadata: jsonb("metadata"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (t) => [index("audit_logs_user_id_idx").on(t.userId), index("audit_logs_created_at_idx").on(t.createdAt)]
+);
 
 export const folders = pgTable("folders", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -110,3 +137,4 @@ export const filesRelations = relations(files, ({ one }) => ({
 export type User = typeof users.$inferSelect;
 export type File = typeof files.$inferSelect;
 export type Folder = typeof folders.$inferSelect;
+export type AuditLog = typeof auditLogs.$inferSelect;

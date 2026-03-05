@@ -141,9 +141,48 @@ Azure Log Analytics          ログ集約
 - API routes: Honoのtestingヘルパーを使用
 - フロントエンド: 現時点では省略、必要に応じて追加
 
+## 認証・セキュリティ構成
+
+### 認証フロー
+1. 登録 → メール確認 (必須) → ログイン
+2. ログイン時に2FA有効なら `/two-factor` へリダイレクト
+3. パスワードリセットはメール経由
+
+### パスワードポリシー
+- 最小12文字
+- 大文字・小文字・数字・記号を各1文字以上
+
+### 実装済みセキュリティ機能
+| 機能 | 実装 |
+|------|------|
+| 2FA (TOTP) | Better Auth twoFactor plugin |
+| メール認証 | Better Auth + nodemailer |
+| パスワード強度 | zxcvbn + カスタムポリシー |
+| レートリミット | カスタムスライディングウィンドウ |
+| 監査ログ | PostgreSQL audit_logs テーブル |
+| CORS | strict origin-only |
+| CSRF | Hono csrf middleware |
+| セキュリティヘッダー | HSTS, X-Frame-Options, CSP, etc. |
+| ルート保護 | Next.js middleware (cookie check) |
+| CSP | next.config.ts headers |
+| Cookie | SameSite=Strict, HttpOnly, Secure (prod) |
+
+### レートリミット設定
+| エンドポイント | 上限 | ウィンドウ |
+|--------------|------|---------|
+| `/api/auth/*` | 10回 | 15分 |
+| `/api/files/upload` | 50回 | 1時間 |
+| `/api/*` (全体) | 120回 | 1分 |
+| Better Auth 組み込み | 10回 | 10分 |
+
+### メール設定 (本番)
+`.env` の `SMTP_*` 変数を設定。未設定の場合はコンソールにログ出力。
+推奨: Azure Communication Services または SendGrid。
+
 ## セキュリティ注意事項
 
 - 秘密情報は `.env` に記載し、絶対にコミットしない
 - Azure Blob StorageへのアクセスはSASトークン経由のみ (公開URL禁止)
-- 認証にはBetter Authのセッション管理を使用
-- Hono の `secureHeaders()` ミドルウェアを適用済み
+- Hono の `secureHeaders()` + `csrf()` ミドルウェアを適用済み
+- 本番では `BETTER_AUTH_SECRET` に32文字以上のランダム文字列を使用
+- 監査ログは `audit_logs` テーブルに自動記録される
